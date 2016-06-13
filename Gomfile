@@ -1,0 +1,4 @@
+gom "github.com/gin-gonic/gin"
+gom "github.com/mjibson/goon"
+gom "golang.org/x/net/context"
+gom "github.com/gin-gonic/contrib/renders/multitemplate"
