@@ -1,19 +1,29 @@
 package template
 
 import (
-	"github.com/gin-gonic/contrib/renders/multitemplate"
+	"github.com/labstack/echo"
 	"html/template"
+	"io"
 )
 
-type GinConfig struct {
+type EchoConfig struct {
 	Function template.FuncMap
 }
 
-func GinRender(config GinConfig) multitemplate.Render {
+type EchoTemplate struct {
+	templates map[string]*template.Template
+}
+
+func (t *EchoTemplate) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates[name].ExecuteTemplate(w, name, data)
+}
+
+func EchoRender(config EchoConfig) *EchoTemplate {
 	includeDir := "templates/includes"
 	layoutDir := "templates/layouts"
 
-	r := multitemplate.New()
+	ts := map[string]*template.Template{}
+
 	includes, layouts := getTemplateFilePath(includeDir, layoutDir)
 
 	for _, layout := range layouts {
@@ -25,7 +35,10 @@ func GinRender(config GinConfig) multitemplate.Render {
 		} else {
 			tmpl = template.Must(template.New(name).Funcs(defaultFuncs()).ParseFiles(files...))
 		}
-		r.Add(name, tmpl)
+		ts[name] = tmpl
 	}
-	return r
+
+	return &EchoTemplate{
+		templates: ts,
+	}
 }
