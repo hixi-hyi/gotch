@@ -18,14 +18,14 @@ func deepRead(files *[]string) filepath.WalkFunc {
 	}
 }
 
-func getTemplateFilePath(includeDir, layoutDir string) ([]string, []string) {
+func GetTemplateFilePath(includeDir, layoutDir string) ([]string, []string) {
 	var layouts, includes []string
 	filepath.Walk(layoutDir, deepRead(&layouts))
 	filepath.Walk(includeDir, deepRead(&includes))
 	return includes, layouts
 }
 
-func defaultFuncs() template.FuncMap {
+func DefaultFuncs() template.FuncMap {
 	return template.FuncMap{
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {
