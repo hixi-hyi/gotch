@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 func deepRead(files *[]string) filepath.WalkFunc {
@@ -40,5 +41,11 @@ func defaultFuncs() template.FuncMap {
 			}
 			return dict, nil
 		},
+		"lineBreak": lineBreak,
 	}
+}
+
+func lineBreak(s string) template.HTML {
+	rep := regexp.MustCompile(`[\r\n]`)
+	return template.HTML(rep.ReplaceAllString(s, "<br>"))
 }
