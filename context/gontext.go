@@ -18,27 +18,24 @@ const (
 
 type Context struct{ context.Context }
 
-func NewFromRequest(req *http.Request) Context {
+var _ context.Context = &Context{}
+
+func NewFromRequest(req *http.Request) Gontext {
 	var ctx context.Context
 	ctx = appengine.NewContext(req)
 	ctx = context.WithValue(ctx, goonk, goon.FromContext(ctx))
-	return Context{ctx}
+	return Gontext{ctx}
 }
 
-func NewFromEchoContext(c echo.Context) Context {
+func NewFromEchoContext(c echo.Context) Gontext {
 	var ctx context.Context
-	req := e.Request().(*standard.Request)
-	ctx = appengine.WithContext(c.StdContext(), req.Request)
+	req := c.Request().(*standard.Request)
+	ctx = appengine.WithContext(c.Context(), req.Request)
 	ctx = context.WithValue(ctx, goonk, goon.FromContext(ctx))
-	return Context{ctx}
+	return Gontext{ctx}
 }
 
-func (ctx *Context) Goon() *goon.Goon {
-	g, _ := ctx.Value(goonk).(*goon.Goon)
+func (gtx *Gontext) Goon() *goon.Goon {
+	g, _ := gtx.Value(goonk).(*goon.Goon)
 	return g
-}
-
-func (g *Gram) WithGoon(goon *goon.Goon) *Gram {
-	ctx := context.WithValue(g, GOONK, goon)
-	return &Gram{ctx}
 }
